@@ -22,7 +22,28 @@ if(empty($_REQUEST["passwort"]) && empty($_REQUEST["datum"])){
 }
 if(!empty($_REQUEST["datum"])){
     $datum=$_REQUEST["datum"];
-    print "TEST";
+    $geteiltesDatum=explode('.', $datum);
+    $ungültigeEingabe=False;
+    if(count($geteiltesDatum)!=2){ //es wird geprüft, ob es nur zwei Teile gibt und ob die beiden Teile 2 ziffern enthalten
+        $ungültigeEingabe=True;
+    }
+    else{
+        if(strlen($geteiltesDatum[0])!=2 || strlen($geteiltesDatum[1])!=2){
+            $ungültigeEingabe=True;
+        }
+    }
+    if($ungültigeEingabe){
+        print '<h1>Die Eingabe ist ungültig!</h1>
+        <form method="post" action="tennisplatzbuchung.php">
+            <input type="hidden" name="passwort" value="1234">
+            <input type="submit" value="Weiter">
+        </form>';
+    }
+    else{
+        print $geteiltesDatum[0]."<br>";
+        print $geteiltesDatum[1]."<br>";
+        print "Hier wird jetzt angezeigt, welche Plätze wann frei sind.";
+    }
 }
 if(!empty($_REQUEST["passwort"])){
     try{

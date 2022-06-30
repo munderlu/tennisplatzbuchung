@@ -1,4 +1,7 @@
+html{
+    height: 100%;
+}
 body{
     text-align: center;
-    background-color: red;
+    background-image: linear-gradient(red, rgb(207, 0, 0));
 }
