@@ -12,11 +12,16 @@
 
 
 <?php
-if(empty($_REQUEST["passwort"])){
+if(empty($_REQUEST["passwort"]) && empty($_REQUEST["datum"])){
     print '<h1>Bitte geben Sie das Passwort ein:</h1>
         <form method="post" action="tennisplatzbuchung.php">
             <input type="password" name="passwort">
+            <input type="submit" value="Weiter">
         </form>';
+}
+if(!empty($_REQUEST["datum"])){
+    $datum=$_REQUEST["datum"];
+    print "TEST";
 }
 if(!empty($_REQUEST["passwort"])){
     try{
@@ -25,7 +30,10 @@ if(!empty($_REQUEST["passwort"])){
         $ergebnis=$dbh->query($sql);
         $rueckgabewert=$ergebnis->fetchAll(PDO::FETCH_ASSOC);
         if($_REQUEST["passwort"]==$rueckgabewert[0]["i_inhalt"]){
-            print "Hier steht der Rest der Website";
+            $sql2="SELECT * FROM inhalt WHERE i_name='datumsabfrage';";
+            $ergebnis=$dbh->query($sql2);
+            $rueckgabewert=$ergebnis->fetchAll(PDO::FETCH_ASSOC);
+            print $rueckgabewert[0]['i_inhalt'];
         }
         else{
             print "Falsches Passwort. <form method='post' action='tennisplatzbuchung.php'><input type='submit' value='Weiter'></form>";
