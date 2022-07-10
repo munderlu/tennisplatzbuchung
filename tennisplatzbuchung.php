@@ -7,11 +7,6 @@
     <title>Tennisplatz Schopfloch</title>
 </head>
 <body>
-    
-</body>
-</html>
-
-
 <?php
 $timestamp=time();
 $heutigesDatum=date("d.m", $timestamp);
@@ -54,10 +49,20 @@ if(!empty($_REQUEST["passwort"])){
     $ergebnis=$dbh->query($sql);
     $rueckgabewert=$ergebnis->fetchAll(PDO::FETCH_ASSOC);
     if($_REQUEST["passwort"]==$rueckgabewert[0]["i_inhalt"]){
-        $sql2="SELECT * FROM inhalt WHERE i_name='datumsabfrage';";
-        $ergebnis=$dbh->query($sql2);
-        $rueckgabewert=$ergebnis->fetchAll(PDO::FETCH_ASSOC);
-        print $rueckgabewert[0]['i_inhalt'];
+        for($i=0; $i<7; $i++){
+            $daten=array();
+            $timestamp=time()+60*60*24*$i;
+            $datum=date("d.m", $timestamp);
+            $sql2="SELECT * FROM daten WHERE d_datum='".$datum."' AND d_uhrzeit='7:00';";
+            $ergebnis=$dbh->query($sql2);
+            $daten[$i]=$ergebnis->fetchAll(PDO::FETCH_ASSOC);
+            print $daten[$i][0]["d_platz1"]." ".$daten[$i][0]["d_datum"]."<br>";
+        }
+        print '<h1>Möchten Sie an einem anderen Tag buchen?</h1>
+            <form method="post" action="tennisplatzbuchung.php">
+                <input type="text" name="datum" placeholder="TT.MM">
+                <input type="submit" value="Weiter">
+            </form>';
         print "Heute ist der ".$heutigesDatum;
         print "<br>$geteiltesHeutigesDatum[0]<br>$geteiltesHeutigesDatum[1]";
         //hier muss jetzt die Tabele mit den Plätzen der nächsten sieben Tagen stehen
@@ -68,3 +73,5 @@ if(!empty($_REQUEST["passwort"])){
 }
 $dbh=null;
 ?>
+</body>
+</html>

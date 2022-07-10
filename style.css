@@ -1,7 +1,8 @@
 html{
-    height: 100%;
+    min-height: 100%;
 }
 body{
+    height: 100%;
     text-align: center;
     background-image: linear-gradient(red, rgb(207, 0, 0));
 }
