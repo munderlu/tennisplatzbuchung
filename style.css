@@ -6,3 +6,8 @@ body{
     text-align: center;
     background-image: linear-gradient(red, rgb(207, 0, 0));
 }
+td, th{
+    border: solid 1px;
+    height: 2rem;
+    width: 4rem;
+}
