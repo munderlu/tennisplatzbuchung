@@ -66,48 +66,48 @@ if(!empty($_REQUEST["statusPlatz"])){
     }
 }
 elseif(!empty($_REQUEST["entgültigesbuchungsdatum"])){
-    
+    $buchungsdatum=$_REQUEST["entgültigesbuchungsdatum"];
+    $anfangszeit=$_REQUEST["anfangszeit"];
+    $endzeit=$_REQUEST["endzeit"];
+    $platz=$_REQUEST["platz"];
+    $sql="SELECT d_id FROM daten WHERE d_datum='$buchungsdatum' AND d_uhrzeit='$anfangszeit';";
+    $rückgabe=$dbh->query($sql);
+    $ergebnis=$rückgabe->fetchAll(PDO::FETCH_ASSOC);
+    $id=$ergebnis[0]["d_id"];
+    $i=0;
+    $uhrzeit=0;
+    while($uhrzeit!=$endzeit){
+        $sql="UPDATE daten SET $platz=1 WHERE d_id=$id+$i;";
+        $sql2="SELECT d_uhrzeit FROM daten WHERE d_id=$id+$i+1;";
+        $dbh->query($sql);
+        $rückgabe=$dbh->query($sql2);
+        $ergebnis=$rückgabe->fetchAll(PDO::FETCH_ASSOC);
+        $uhrzeit=$ergebnis[0]["d_uhrzeit"];
+        if($uhrzeit=="22:30"){
+            break;
+        }
+        $i++;
+    }
+    print "<h1>Ihr Plazt wurde erfolgreich gebucht!</h1>";
+    print '<form method="post" action="tennisplatzbuchung.php">
+        <input type="hidden" name="passwort" value="1234">
+        <input type="submit" value="Weiter"></form>';
 }
 elseif(!empty($_REQUEST["endzeit"])){
     $buchungsdatum=$_REQUEST["buchungsdatum"];
     $anfangszeit=$_REQUEST["anfangszeit"];
     $endzeit=$_REQUEST["endzeit"];
     $platz=$_REQUEST["platz"];
-    $ungültigeEingabe=False;
-    $geteilteEndzeit=explode(":", $endzeit);
-    if(count($geteilteEndzeit)!=2){
-        $ungültigeEingabe=True;
-    }
-    else{
-        if(strlen($geteilteEndzeit[0])!=2 || strlen($geteilteEndzeit[1])!=2){
-            $ungültigeEingabe=True;
-        }
-        if(intval($geteilteEndzeit[0])>=23){
-            $ungültigeEingabe=True;
-        }
-        if(intval($geteilteEndzeit[1])!=0 && intval($geteilteEndzeit[1])!=30){
-            $ungültigeEingabe=True;
-        }
-    }
-    if($ungültigeEingabe){
-        print '<h1>Die Eingabe ist ungültig!</h1>
+    print '<h1>Möchten Sie am '.$buchungsdatum.' von '.$anfangszeit.' Uhr bis '.$endzeit.' Uhr den Platz '.$platz[-1].' buchen?</h1>
         <form method="post" action="tennisplatzbuchung.php">
-            <input type="hidden" name="passwort" value="1234">
-            <input type="submit" value="Weiter">
-        </form>';
-    }
-    else{
-        print '<h1>Möchten Sie am '.$buchungsdatum.' von '.$anfangszeit.' Uhr bis '.$endzeit.' Uhr den Platz '.$platz[-1].' buchen?</h1>
-            <form method="post" action="tennisplatzbuchung.php">
-            <input type="hidden" name="endzeit" value="'.$endzeit.'">
-            <input type="hidden" name="entgültigesbuchungsdatum" value="'.$buchungsdatum.'">
-            <input type="hidden" name="anfangszeit" value="'.$anfangszeit.'">
-            <input type="hidden" name="platz" value="'.$platz.'">
-            <input type="submit" value="Ja"></form>';
-        print '<form method="post" action="tennisplatzbuchung.php">
-            <input type="hidden" name="passwort" value="1234">
-            <input type="submit" value="Nein, zurück"></form>';
-    }
+        <input type="hidden" name="endzeit" value="'.$endzeit.'">
+        <input type="hidden" name="entgültigesbuchungsdatum" value="'.$buchungsdatum.'">
+        <input type="hidden" name="anfangszeit" value="'.$anfangszeit.'">
+        <input type="hidden" name="platz" value="'.$platz.'">
+        <input type="submit" value="Ja"></form><br>';
+    print '<form method="post" action="tennisplatzbuchung.php">
+        <input type="hidden" name="passwort" value="1234">
+        <input type="submit" value="Nein, zurück!"></form>';
 }
 if(!empty($_REQUEST["datum"])){
     $datum=$_REQUEST["datum"];
@@ -127,25 +127,29 @@ if(!empty($_REQUEST["datum"])){
     foreach($daten as $i){
         if($i["d_platz1"]==0){
             $statusPlatz1="frei";
+            $farbe1="green";
         }
         else{
             $statusPlatz1="belegt";
+            $farbe1="red";
         }
         if($i["d_platz2"]==0){
             $statusPlatz2="frei";
+            $farbe2="green";
         }
         else{
             $statusPlatz2="belegt";
+            $farbe2="red";
         }
         print '<tr><td>'.$i["d_datum"].'</td>';
         print '<td>'.$i["d_uhrzeit"].'</td>';
-        print '<td><form method="post" action="tennisplatzbuchung.php">
+        print '<td style="background-color:'.$farbe1.'"><form method="post" action="tennisplatzbuchung.php">
             <input type="hidden" value="'.$i["d_datum"].'" name="buchungsdatum">
             <input type="hidden" value="'.$i["d_uhrzeit"].'" name="uhrzeit">
             <input type="hidden" value="'.$statusPlatz1.'" name="statusPlatz">
             <input type="hidden" value="d_platz1" name="platz">
             <input type="submit" value="'.$statusPlatz1.'"></form></td>';
-        print '<td><form method="post" action="tennisplatzbuchung.php">
+        print '<td style="background-color:'.$farbe2.'"><form method="post" action="tennisplatzbuchung.php">
             <input type="hidden" value="'.$i["d_datum"].'" name="buchungsdatum">
             <input type="hidden" value="'.$i["d_uhrzeit"].'" name="uhrzeit">
             <input type="hidden" value="'.$statusPlatz2.'" name="statusPlatz">
@@ -182,25 +186,29 @@ if(!empty($_REQUEST["passwort"])){
             foreach($i as $j){
                 if($j["d_platz1"]==0){
                     $statusPlatz1="frei";
+                    $farbe1="green";
                 }
                 else{
                     $statusPlatz1="belegt";
+                    $farbe1="red";
                 }
                 if($j["d_platz2"]==0){
                     $statusPlatz2="frei";
+                    $farbe2="green";
                 }
                 else{
                     $statusPlatz2="belegt";
+                    $farbe2="red";
                 }
                 print '<tr><td>'.$j["d_datum"].'</td>';
                 print '<td>'.$j["d_uhrzeit"].'</td>';
-                print '<td><form method="post" action="tennisplatzbuchung.php">
+                print '<td style="background-color:'.$farbe1.'"><form method="post" action="tennisplatzbuchung.php">
                     <input type="hidden" value="'.$j["d_datum"].'" name="buchungsdatum">
                     <input type="hidden" value="'.$j["d_uhrzeit"].'" name="uhrzeit">
                     <input type="hidden" value="'.$statusPlatz1.'" name="statusPlatz">
                     <input type="hidden" value="d_platz1" name="platz">
                     <input type="submit" value="'.$statusPlatz1.'"></form></td>';
-                print '<td><form method="post" action="tennisplatzbuchung.php">
+                print '<td style="background-color:'.$farbe2.'"><form method="post" action="tennisplatzbuchung.php">
                     <input type="hidden" value="'.$j["d_datum"].'" name="buchungsdatum">
                     <input type="hidden" value="'.$j["d_uhrzeit"].'" name="uhrzeit">
                     <input type="hidden" value="'.$statusPlatz2.'" name="statusPlatz">
