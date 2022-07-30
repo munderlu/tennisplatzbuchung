@@ -111,34 +111,52 @@ elseif(!empty($_REQUEST["endzeit"])){
 }
 if(!empty($_REQUEST["datum"])){
     $datum=$_REQUEST["datum"];
-    $geteiltesDatum=explode('.', $datum);
-    $ungültigeEingabe=False;
-    if(count($geteiltesDatum)!=3){ //es wird geprüft, ob es nur zwei Teile gibt und ob die beiden Teile 2 ziffern enthalten
-        $ungültigeEingabe=True;
+    $geteiltesDatum=explode('-', $datum);
+    $monat=$geteiltesDatum[1];
+    $tag=$geteiltesDatum[2];
+    $sql="SELECT * FROM daten WHERE d_datum='$tag.$monat.';";
+    $rückgabe=$dbh->query($sql);
+    $daten=$rückgabe->fetchAll(PDO::FETCH_ASSOC);
+    print '<table>
+                <tr>
+                    <th>Datum</th>
+                    <th>Uhrzeit</th>
+                    <th>Platz1</th>
+                    <th>Platz2</th>
+                </tr>';
+    foreach($daten as $i){
+        if($i["d_platz1"]==0){
+            $statusPlatz1="frei";
+        }
+        else{
+            $statusPlatz1="belegt";
+        }
+        if($i["d_platz2"]==0){
+            $statusPlatz2="frei";
+        }
+        else{
+            $statusPlatz2="belegt";
+        }
+        print '<tr><td>'.$i["d_datum"].'</td>';
+        print '<td>'.$i["d_uhrzeit"].'</td>';
+        print '<td><form method="post" action="tennisplatzbuchung.php">
+            <input type="hidden" value="'.$i["d_datum"].'" name="buchungsdatum">
+            <input type="hidden" value="'.$i["d_uhrzeit"].'" name="uhrzeit">
+            <input type="hidden" value="'.$statusPlatz1.'" name="statusPlatz">
+            <input type="hidden" value="d_platz1" name="platz">
+            <input type="submit" value="'.$statusPlatz1.'"></form></td>';
+        print '<td><form method="post" action="tennisplatzbuchung.php">
+            <input type="hidden" value="'.$i["d_datum"].'" name="buchungsdatum">
+            <input type="hidden" value="'.$i["d_uhrzeit"].'" name="uhrzeit">
+            <input type="hidden" value="'.$statusPlatz2.'" name="statusPlatz">
+            <input type="hidden" value="d_platz2" name="platz">
+            <input type="submit" value="'.$statusPlatz2.'"></form></td></tr>';
     }
-    else{
-        if(strlen($geteiltesDatum[0])!=2 || strlen($geteiltesDatum[1])!=2){
-            $ungültigeEingabe=True;
-        }
-        if(strlen($geteiltesDatum[2]!=null)){
-            $ungültigeEingabe=True;
-        }
-        if(intval($geteiltesDatum[0])>31 || intval($geteiltesDatum[1])>12){
-            $ungültigeEingabe=True;
-        }
-    }
-    if($ungültigeEingabe){
-        print '<h1>Die Eingabe ist ungültig!</h1>
+    print "</table>";
+    print '<h1>Wann möchten Sie am '.$tag.'.'.$monat.'. buchen?</h1>
         <form method="post" action="tennisplatzbuchung.php">
-            <input type="hidden" name="passwort" value="1234">
-            <input type="submit" value="Weiter">
-        </form>';
-    }
-    else{
-        print $geteiltesDatum[0]."<br>";
-        print $geteiltesDatum[1]."<br>";
-        print "Hier wird jetzt angezeigt, welche Plätze wann frei sind.";// noch zu schreiben
-    }
+        <input type="hidden" name="passwort" value="1234">
+        <input type="submit" value="An einem anderen Tag buchen"></form>';
 }
 if(!empty($_REQUEST["passwort"])){
     $sql="SELECT * FROM inhalt WHERE i_name='passwort';";
@@ -194,11 +212,9 @@ if(!empty($_REQUEST["passwort"])){
         //jetzt kommt die Abfrage für einen anderen Tag
         print '<h1>Möchten Sie an einem anderen Tag buchen?</h1>
             <form method="post" action="tennisplatzbuchung.php">
-                <input type="text" name="datum" placeholder="TT.MM.">
+                <input type="date" name="datum">
                 <input type="submit" value="Weiter">
             </form>';
-        print "Heute ist der ".$heutigesDatum;
-        print "<br>$geteiltesHeutigesDatum[0]<br>$geteiltesHeutigesDatum[1]";
     }
     else{
         print "Falsches Passwort. <form method='post' action='tennisplatzbuchung.php'><input type='submit' value='Weiter'></form>";
