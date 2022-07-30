@@ -230,5 +230,6 @@ if(!empty($_REQUEST["passwort"])){
 }
 $dbh=null;
 ?>
+<img src="Logo.png" height="250">
 </body>
 </html>
