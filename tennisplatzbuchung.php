@@ -32,6 +32,15 @@ if(!empty($_REQUEST["statusPlatz"])){
         $ergebnis=$rückgabe->fetchAll(PDO::FETCH_ASSOC);
         $id=$ergebnis[0]["d_id"];
         for($i=1; $i<=4; $i++){
+            if($uhrzeit=="22:30"){
+                print '<form method="post" action="tennisplatzbuchung.php">
+                    <input type="hidden" name="buchungsdatum" value="'.$buchungsdatum.'">
+                    <input type="hidden" name="anfangszeit" value="'.$uhrzeit.'">
+                    <input type="hidden" name="platz" value="'.$platz.'">
+                    <input type="hidden" name="endzeit" value="23:00">
+                    <input type="submit" value="23:00"></form><br>';
+                break;
+            }
             $sql="SELECT * FROM daten WHERE d_id=$id+$i;";
             $rückgabe=$dbh->query($sql);
             $ergebnis=$rückgabe->fetchAll(PDO::FETCH_ASSOC);
@@ -41,7 +50,7 @@ if(!empty($_REQUEST["statusPlatz"])){
                 <input type="hidden" name="platz" value="'.$platz.'">
                 <input type="hidden" name="endzeit" value="'.$ergebnis[0]["d_uhrzeit"].'">
                 <input type="submit" value="'.$ergebnis[0]["d_uhrzeit"].'"></form><br>';
-            if($ergebnis[0][$platz]!=0){
+            if($ergebnis[0][$platz]!=0 || $ergebnis[0]["d_uhrzeit"]=="22:30"){
                 break;
             }
         }
