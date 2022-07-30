@@ -9,7 +9,7 @@
 <body>
 <?php
 $timestamp=time();
-$heutigesDatum=date("d.m", $timestamp);
+$heutigesDatum=date("d.m.", $timestamp);
 $geteiltesHeutigesDatum=explode(".", $heutigesDatum);
 $dbh=new PDO("mysql: host=localhost; dbname=tennisplatzbuchung", "luke", "Fallen2211");
 if(empty($_REQUEST["passwort"]) && empty($_REQUEST["datum"]) && empty($_REQUEST["buchungsdatum"]) && empty($_REQUEST["endzeit"])){
@@ -91,11 +91,14 @@ if(!empty($_REQUEST["datum"])){
     $datum=$_REQUEST["datum"];
     $geteiltesDatum=explode('.', $datum);
     $ungültigeEingabe=False;
-    if(count($geteiltesDatum)!=2){ //es wird geprüft, ob es nur zwei Teile gibt und ob die beiden Teile 2 ziffern enthalten
+    if(count($geteiltesDatum)!=3){ //es wird geprüft, ob es nur zwei Teile gibt und ob die beiden Teile 2 ziffern enthalten
         $ungültigeEingabe=True;
     }
     else{
         if(strlen($geteiltesDatum[0])!=2 || strlen($geteiltesDatum[1])!=2){
+            $ungültigeEingabe=True;
+        }
+        if(strlen($geteiltesDatum[2]!=null)){
             $ungültigeEingabe=True;
         }
     }
@@ -119,20 +122,20 @@ if(!empty($_REQUEST["passwort"])){
     if($_REQUEST["passwort"]==$rueckgabewert[0]["i_inhalt"]){
         for($i=0; $i<3; $i++){
             $timestamp=time()+60*60*24*$i;
-            $datum=date("d.m", $timestamp);
+            $datum=date("d.m.", $timestamp);
             $sql2="SELECT * FROM daten WHERE d_datum='".$datum."';";
             $ergebnis=$dbh->query($sql2);
             $daten[$i]=$ergebnis->fetchAll(PDO::FETCH_ASSOC);
             //print $daten[$i][0]["d_platz1"]." ".$daten[$i][0]["d_datum"]."<br>";
         }
-        print '<table>
-                    <tr>
-                        <th>Datum</th>
-                        <th>Uhrzeit</th>
-                        <th>Platz1</th>
-                        <th>Platz2</th>
-                    </tr>';
         foreach($daten as $i){
+            print '<table>
+                        <tr>
+                            <th>Datum</th>
+                            <th>Uhrzeit</th>
+                            <th>Platz1</th>
+                            <th>Platz2</th>
+                        </tr>';
             foreach($i as $j){
                 if($j["d_platz1"]==0){
                     $statusPlatz1="frei";
@@ -161,12 +164,12 @@ if(!empty($_REQUEST["passwort"])){
                     <input type="hidden" value="2" name="platz">
                     <input type="submit" value="'.$statusPlatz2.'"></form></td></tr>';
             }
+            print "</table>";
         }
-        print "</table>";
         //jetzt kommt die Abfrage für einen anderen Tag
         print '<h1>Möchten Sie an einem anderen Tag buchen?</h1>
             <form method="post" action="tennisplatzbuchung.php">
-                <input type="text" name="datum" placeholder="TT.MM">
+                <input type="text" name="datum" placeholder="TT.MM.">
                 <input type="submit" value="Weiter">
             </form>';
         print "Heute ist der ".$heutigesDatum;

@@ -11,3 +11,8 @@ td, th{
     height: 2rem;
     width: 4rem;
 }
+table{
+    margin-right: 20px;
+    margin-bottom: 20px;
+    float: left;
+}
