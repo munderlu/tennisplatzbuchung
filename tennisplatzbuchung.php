@@ -95,6 +95,8 @@ if(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"])){
                 <input type="hidden" value="'.$passwort.'" name="passwort">
                 <input type="submit" value="Weiter">
             </form>';
+        print '<br><form action="tennisplatzbuchung.php" method="post">
+            <input type="submit" value="Abmelden"></form>';
     }
     else{
         print "<h1>Sie haben ein falsches Passwort oder einen falschen Benutzername eingegeben.</h1>
@@ -228,6 +230,21 @@ if(!empty($_REQUEST["statusPlatz"])){
             <input type="hidden" value="'.$benutzername.'" name="benutzername">
             <input type="hidden" value="'.$passwort.'" name="passwort">
             <input type="submit" value="Zurück"></form>';
+        $sql="SELECT * FROM daten WHERE d_datum='$buchungsdatum' AND d_uhrzeit='$uhrzeit';";
+        $rückgabe=$dbh->query($sql);
+        $ergebnis=$rückgabe->fetchAll(PDO::FETCH_ASSOC);
+        $welcherPlatzBucher="d_bucherplatz".$platz[-1];
+        if($ergebnis[0][$welcherPlatzBucher]==$benutzername){
+            print '<br><form method="post" action="tennisplatzbuchung.php">
+                <input type="hidden" name="buchungsdatum" value="'.$buchungsdatum.'">
+                <input type="hidden" name="uhrzeit" value="'.$uhrzeit.'">
+                <input type="hidden" name="platz" value="'.$platz.'">
+                <input type="hidden" name="benutzer" value="'.$benutzername.'">
+                <input type="hidden" name="passwort" value="'.$passwort.'">
+                <input type="hidden" name="passwort" value="'.$passwort.'">
+                <input type="hidden" name="storno" value="Ja">
+                <input type="submit" value="Stornieren"></form>';
+        }
     }
 }
 if(!empty($_REQUEST["entgültigesbuchungsdatum"])){
@@ -255,7 +272,7 @@ if(!empty($_REQUEST["entgültigesbuchungsdatum"])){
         }
         $i++;
     }
-    print "<h1>Ihr Plazt wurde erfolgreich gebucht!</h1>";
+    print "<h1>Ihr Platz wurde erfolgreich gebucht!</h1>";
     print '<form method="post" action="tennisplatzbuchung.php">
         <input type="hidden" value="'.$benutzername.'" name="benutzername">
         <input type="hidden" value="'.$passwort.'" name="passwort">
@@ -274,6 +291,126 @@ elseif(!empty($_REQUEST["endzeit"])){
         <input type="hidden" name="entgültigesbuchungsdatum" value="'.$buchungsdatum.'">
         <input type="hidden" name="anfangszeit" value="'.$anfangszeit.'">
         <input type="hidden" name="platz" value="'.$platz.'">
+        <input type="hidden" value="'.$benutzername.'" name="benutzer">
+        <input type="hidden" value="'.$passwort.'" name="passwort">
+        <input type="submit" value="Ja"></form><br>';
+    print '<form method="post" action="tennisplatzbuchung.php">
+        <input type="hidden" value="'.$benutzername.'" name="benutzername">
+        <input type="hidden" value="'.$passwort.'" name="passwort">
+        <input type="submit" value="Nein, zurück!"></form>';
+}
+if(!empty($_REQUEST["storno"])){
+    $buchungsdatum=$_REQUEST["buchungsdatum"];
+    $uhrzeit=$_REQUEST["uhrzeit"];
+    $platz=$_REQUEST["platz"];
+    $benutzername=$_REQUEST["benutzer"];
+    $passwort=$_REQUEST["passwort"];
+    $welcherPlatzBucher="d_bucherplatz".$platz[-1];
+    $zahl=0;
+    $zusammenhängendeZeit=True;
+    $wasgefunden=False;
+    $wasgemacht=False;
+    $sql="SELECT * FROM daten WHERE d_datum='$buchungsdatum' AND d_uhrzeit='$uhrzeit';";
+    $rueckgabe=$dbh->query($sql);
+    $ergebnis=$rueckgabe->fetchAll(PDO::FETCH_ASSOC);
+    $id=$ergebnis[0]["d_id"];
+    $sql="SELECT * FROM daten WHERE d_datum='$buchungsdatum';";//AND d_bucherplatz".$platz[-1]."='$benutzername'
+    $rueckgabe=$dbh->query($sql);
+    $ergebnis=$rueckgabe->fetchAll(PDO::FETCH_ASSOC);
+    print "<h1>Bis wann möchten Sie am $buchungsdatum um $uhrzeit Uhr den Platz ".$platz[-1]." stornieren?</h1>";
+    foreach($ergebnis as $i){
+        if($i[$welcherPlatzBucher]==$benutzername && $i["d_id"]>=$id && $zusammenhängendeZeit){
+            if($i["d_uhrzeit"]=="22:30"){
+                print '<br><form action="tennisplatzbuchung.php" method="post">
+                <input type="hidden" name="buchungsdatum" value="'.$buchungsdatum.'">
+                <input type="hidden" name="uhrzeit" value="'.$uhrzeit.'">
+                <input type="hidden" name="platz" value="'.$platz.'">
+                <input type="hidden" name="benutzer" value="'.$benutzername.'">
+                <input type="hidden" name="passwort" value="'.$passwort.'">
+                <input type="hidden" name="passwort" value="'.$passwort.'">
+                <input type="hidden" name="stornoendzeit" value="23:00">
+                <input type="submit" value="23:00"></form>';
+                break;
+            }
+            print '<br><form action="tennisplatzbuchung.php" method="post">
+                <input type="hidden" name="buchungsdatum" value="'.$buchungsdatum.'">
+                <input type="hidden" name="uhrzeit" value="'.$uhrzeit.'">
+                <input type="hidden" name="platz" value="'.$platz.'">
+                <input type="hidden" name="benutzer" value="'.$benutzername.'">
+                <input type="hidden" name="passwort" value="'.$passwort.'">
+                <input type="hidden" name="passwort" value="'.$passwort.'">
+                <input type="hidden" name="stornoendzeit" value="'.$ergebnis[$zahl+1]["d_uhrzeit"].'">
+                <input type="submit" value="'.$ergebnis[$zahl+1]["d_uhrzeit"].'"></form>';
+                $wasgefunden=True;
+                $wasgemacht=True;
+        }
+        if(!$wasgefunden && $wasgemacht){
+            $zusammenhängendeZeit=False;
+        }
+        $zahl++;
+        $wasgefunden=False;
+    }
+    print '<br><form method="post" action="tennisplatzbuchung.php">
+        <input type="hidden" value="'.$benutzername.'" name="benutzername">
+        <input type="hidden" value="'.$passwort.'" name="passwort">
+        <input type="submit" value="Zurück"></form>';
+}
+if(!empty($_REQUEST["entgültigesStorno"])){
+    $buchungsdatum=$_REQUEST["buchungsdatum"];
+    $uhrzeit=$_REQUEST["uhrzeit"];
+    $platz=$_REQUEST["platz"];
+    $endzeit=$_REQUEST["stornoendzeit"];
+    $benutzername=$_REQUEST["benutzer"];
+    $passwort=$_REQUEST["passwort"];
+    $welcherPlatzBucher="d_bucherplatz".$platz[-1];
+    $sql="SELECT * FROM daten WHERE d_datum='$buchungsdatum' AND $welcherPlatzBucher='$benutzername';";
+    $rückgabe=$dbh->query($sql);
+    $ergebnis=$rückgabe->fetchAll(PDO::FETCH_ASSOC);
+    $sql2="SELECT * FROM daten WHERE d_datum='$buchungsdatum' AND d_uhrzeit='$uhrzeit';";
+    $rückgabe2=$dbh->query($sql2);
+    $ergebnis2=$rückgabe2->fetchAll(PDO::FETCH_ASSOC);
+    $anfangsID=$ergebnis2[0]["d_id"];
+    if($endzeit!="23:00"){
+        $sql3="SELECT * FROM daten WHERE d_datum='$buchungsdatum' AND d_uhrzeit='$endzeit';";
+        $rückgabe3=$dbh->query($sql3);
+        $ergebnis3=$rückgabe3->fetchAll(PDO::FETCH_ASSOC);
+        $endID=$ergebnis3[0]["d_id"];
+    }
+    else{
+        $endID=10000000;
+    }
+    foreach($ergebnis as $i){
+        if($uhrzeit=="22:30" || $i["d_uhrzeit"]=="22:30"){
+            $sql="UPDATE daten SET $welcherPlatzBucher=null, $platz=0 WHERE d_datum='$buchungsdatum' AND d_uhrzeit='22:30';";
+            $dbh->query($sql);
+            break;
+        }
+        if($i["d_id"]>=$anfangsID && $i["d_id"]<$endID){
+            $sql="UPDATE daten SET $welcherPlatzBucher=null, $platz=0 WHERE d_datum='$buchungsdatum' AND d_uhrzeit='".$i["d_uhrzeit"]."';";
+            $dbh->query($sql);
+        }
+    }
+    print "<h1>Ihre Buchung wurde erfolgreich storniert!</h1>";
+    print '<br><form method="post" action="tennisplatzbuchung.php">
+        <input type="hidden" value="'.$benutzername.'" name="benutzername">
+        <input type="hidden" value="'.$passwort.'" name="passwort">
+        <input type="submit" value="Zurück"></form>';
+}
+elseif(!empty($_REQUEST["stornoendzeit"])){
+    $buchungsdatum=$_REQUEST["buchungsdatum"];
+    $uhrzeit=$_REQUEST["uhrzeit"];
+    $platz=$_REQUEST["platz"];
+    $endzeit=$_REQUEST["stornoendzeit"];
+    $benutzername=$_REQUEST["benutzer"];
+    $passwort=$_REQUEST["passwort"];
+    $welcherPlatzBucher="d_bucherplatz".$platz[-1];
+    print "<h1>Möchten Sie am $buchungsdatum von $uhrzeit Uhr bis $endzeit Uhr den Platz ".$platz[-1]." stornieren?</h1>";
+    print '<form method="post" action="tennisplatzbuchung.php">
+        <input type="hidden" name="stornoendzeit" value="'.$endzeit.'">
+        <input type="hidden" name="buchungsdatum" value="'.$buchungsdatum.'">
+        <input type="hidden" name="uhrzeit" value="'.$uhrzeit.'">
+        <input type="hidden" name="platz" value="'.$platz.'">
+        <input type="hidden" name="entgültigesStorno" value="Ja">
         <input type="hidden" value="'.$benutzername.'" name="benutzer">
         <input type="hidden" value="'.$passwort.'" name="passwort">
         <input type="submit" value="Ja"></form><br>';
