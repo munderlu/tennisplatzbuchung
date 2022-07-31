@@ -51,19 +51,19 @@ if(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"])){
                         </tr>';
             foreach($i as $j){
                 if($j["d_platz1"]==0){
-                    $statusPlatz1="frei";
+                    $statusPlatz1="Frei";
                     $farbe1="green";
                 }
                 else{
-                    $statusPlatz1="belegt";
+                    $statusPlatz1="Belegt von ".$j["d_bucherplatz1"]."";
                     $farbe1="red";
                 }
                 if($j["d_platz2"]==0){
-                    $statusPlatz2="frei";
+                    $statusPlatz2="Frei";
                     $farbe2="green";
                 }
                 else{
-                    $statusPlatz2="belegt";
+                    $statusPlatz2="Belegt von ".$j["d_bucherplatz2"]."";
                     $farbe2="red";
                 }
                 print '<tr><td>'.$j["d_datum"].'</td>';
@@ -128,19 +128,19 @@ if(!empty($_REQUEST["datum"])){
                     </tr>';
         foreach($daten as $i){
             if($i["d_platz1"]==0){
-                $statusPlatz1="frei";
+                $statusPlatz1="Frei";
                 $farbe1="green";
             }
             else{
-                $statusPlatz1="belegt";
+                $statusPlatz1="Belegt von ".$i["d_bucherplatz1"]."";
                 $farbe1="red";
             }
             if($i["d_platz2"]==0){
-                $statusPlatz2="frei";
+                $statusPlatz2="Frei";
                 $farbe2="green";
             }
             else{
-                $statusPlatz2="belegt";
+                $statusPlatz2="Belegt von ".$i["d_bucherplatz2"]."";
                 $farbe2="red";
             }
             print '<tr><td>'.$i["d_datum"].'</td>';
@@ -172,7 +172,7 @@ if(!empty($_REQUEST["datum"])){
     else{
         print '<h1>Die Platzbuchung ist nur für maximal zwei Wochen im Vorraus möglich.</h1>';
         print '<form method="post" action="tennisplatzbuchung.php">
-            <input type="hidden" value="'.$benutzername.'" name="benutzer">
+            <input type="hidden" value="'.$benutzername.'" name="benutzername">
             <input type="hidden" value="'.$passwort.'" name="passwort">
             <input type="submit" value="An einem anderen Tag buchen"></form>';
     }
@@ -184,7 +184,7 @@ if(!empty($_REQUEST["statusPlatz"])){
     $platz=$_REQUEST["platz"];
     $benutzername=$_REQUEST["benutzer"];
     $passwort=$_REQUEST["passwort"];
-    if($statusPlatz=="frei"){
+    if($statusPlatz=="Frei"){
         print '<h1>Bis wann möchten Sie am '.$buchungsdatum.' um '.$uhrzeit.' Uhr den Platz '.$platz[-1].' buchen?</h1>';
         $sql="SELECT d_id FROM daten WHERE d_datum='$buchungsdatum' AND d_uhrzeit='$uhrzeit';";
         $rückgabe=$dbh->query($sql);
@@ -225,7 +225,8 @@ if(!empty($_REQUEST["statusPlatz"])){
     else{
         print '<h1>Dieser Platz ist zu der Uhrzeit leider belegt.</h1><br>
             <form method="post" action="tennisplatzbuchung.php">
-            <input type="hidden" value="1234" name="passwort">
+            <input type="hidden" value="'.$benutzername.'" name="benutzername">
+            <input type="hidden" value="'.$passwort.'" name="passwort">
             <input type="submit" value="Zurück"></form>';
     }
 }
