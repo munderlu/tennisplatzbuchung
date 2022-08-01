@@ -12,7 +12,7 @@ $timestamp=time();
 $heutigesDatum=date("d.m.", $timestamp);
 $geteiltesHeutigesDatum=explode(".", $heutigesDatum);
 //$heutigeUhrzeit=date("H:i", $timestamp);
-$dbh=new PDO("mysql: host=localhost; dbname=tennisplatzbuchung", "luke", "Fallen2211");
+$dbh=new PDO("mysql: host=localhost; dbname=tennisplatzbuchung", "root", "");
 if((empty($_REQUEST["passwort"]) || empty($_REQUEST["benutzername"])) && empty($_REQUEST["datum"]) && empty($_REQUEST["buchungsdatum"]) && empty($_REQUEST["endzeit"])){
     print '<h1>Bitte geben Sie Ihren Benutzername und Ihr Passwort ein:</h1>
         <form method="post" action="tennisplatzbuchung.php">
@@ -55,7 +55,7 @@ if(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"])){
                     $farbe1="green";
                 }
                 else{
-                    $statusPlatz1="Belegt von ".$j["d_bucherplatz1"]."";
+                    $statusPlatz1=$j["d_bucherplatz1"]."";
                     $farbe1="red";
                 }
                 if($j["d_platz2"]==0){
@@ -63,7 +63,7 @@ if(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"])){
                     $farbe2="green";
                 }
                 else{
-                    $statusPlatz2="Belegt von ".$j["d_bucherplatz2"]."";
+                    $statusPlatz2=$j["d_bucherplatz2"]."";
                     $farbe2="red";
                 }
                 print '<tr><td>'.$j["d_datum"].'</td>';
@@ -134,7 +134,7 @@ if(!empty($_REQUEST["datum"])){
                 $farbe1="green";
             }
             else{
-                $statusPlatz1="Belegt von ".$i["d_bucherplatz1"]."";
+                $statusPlatz1=$i["d_bucherplatz1"]."";
                 $farbe1="red";
             }
             if($i["d_platz2"]==0){
@@ -142,7 +142,7 @@ if(!empty($_REQUEST["datum"])){
                 $farbe2="green";
             }
             else{
-                $statusPlatz2="Belegt von ".$i["d_bucherplatz2"]."";
+                $statusPlatz2=$i["d_bucherplatz2"]."";
                 $farbe2="red";
             }
             print '<tr><td>'.$i["d_datum"].'</td>';
@@ -267,7 +267,7 @@ if(!empty($_REQUEST["entgültigesbuchungsdatum"])){
         $rückgabe=$dbh->query($sql2);
         $ergebnis=$rückgabe->fetchAll(PDO::FETCH_ASSOC);
         $uhrzeit=$ergebnis[0]["d_uhrzeit"];
-        if($uhrzeit=="22:30"){
+        if($anfangszeit=="22:30"){
             break;
         }
         $i++;
