@@ -10,6 +10,7 @@ td, th{
     border: solid 1px;
     height: 2rem;
     width: 4rem;
+    background-color: yellow;
 }
 table{
     margin-right: 20px;
