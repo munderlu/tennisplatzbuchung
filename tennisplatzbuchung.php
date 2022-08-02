@@ -7,6 +7,7 @@
     <title>Tennisplatz Schopfloch</title>
 </head>
 <body>
+<h1 id="überschrift">Tennisplatzbuchung</h1>
 <?php
 $timestamp=time();
 $heutigesDatum=date("d.m.", $timestamp);
@@ -19,7 +20,7 @@ if((empty($_REQUEST["passwort"]) || empty($_REQUEST["benutzername"])) && empty($
             Benutzername: <input typ="text" name="benutzername"><br><br>
             Passwort: <input type="password" name="passwort">
             <input type="submit" value="Weiter">
-        </form>';
+        </form><img src="Logo.png" height="250">';
 }
 if(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"])){
     $passwort=$_REQUEST["passwort"];
@@ -84,7 +85,7 @@ if(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"])){
                 print "</table>";
             }
             //jetzt kommt die Abfrage für einen anderen Tag
-            print '<h1>Möchten Sie an einem anderen Tag buchen?</h1>
+            print '<div><h1>Möchten Sie an einem anderen Tag buchen?</h1>
                 <form method="post" action="tennisplatzbuchung.php">
                     <input type="date" name="datum">
                     <input type="hidden" value="'.$benutzername.'" name="benutzer">
@@ -92,14 +93,15 @@ if(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"])){
                     <input type="submit" value="Weiter">
                 </form>';
             print '<br><form action="tennisplatzbuchung.php" method="post">
-                <input type="submit" value="Abmelden"></form>';
+                <input type="submit" value="Abmelden"></form><img src="Logo.png" height="250"></div>';
             $richtigeEingabe=True;
             break;
         }
     }
     if(!$richtigeEingabe){
         print "<h1>Sie haben ein falsches Passwort oder einen falschen Benutzername eingegeben.</h1>
-            <form method='post' action='tennisplatzbuchung.php'><input type='submit' value='Weiter'></form>";
+            <form method='post' action='tennisplatzbuchung.php'><input type='submit' value='Weiter'></form>
+            <img src='Logo.png' height='250'>";
     }
 }
 if(!empty($_REQUEST["datum"])){
@@ -164,18 +166,18 @@ if(!empty($_REQUEST["datum"])){
                 <input type="submit" value="'.$statusPlatz2.'"></form></td></tr>';
         }
         print "</table>";
-        print '<h1>Wann möchten Sie am '.$tag.'.'.$monat.'. buchen?</h1>
+        print '<div><h1>Wann möchten Sie am '.$tag.'.'.$monat.'. buchen?</h1>
             <form method="post" action="tennisplatzbuchung.php">
             <input type="hidden" value="'.$benutzername.'" name="benutzername">
             <input type="hidden" value="'.$passwort.'" name="passwort">
-            <input type="submit" value="An einem anderen Tag buchen"></form>';
+            <input type="submit" value="An einem anderen Tag buchen"></form><img src="Logo.png" height="250"></div>';
     }
     else{
         print '<h1>Die Platzbuchung ist nur für maximal zwei Wochen im Vorraus möglich.</h1>';
         print '<form method="post" action="tennisplatzbuchung.php">
             <input type="hidden" value="'.$benutzername.'" name="benutzername">
             <input type="hidden" value="'.$passwort.'" name="passwort">
-            <input type="submit" value="An einem anderen Tag buchen"></form>';
+            <input type="submit" value="An einem anderen Tag buchen"></form><img src="Logo.png" height="250">';
     }
 }
 if(!empty($_REQUEST["statusPlatz"])){
@@ -221,7 +223,7 @@ if(!empty($_REQUEST["statusPlatz"])){
         print '<form method="post" action="tennisplatzbuchung.php">
             <input type="hidden" value="'.$benutzername.'" name="benutzername">
             <input type="hidden" value="'.$passwort.'" name="passwort">
-            <input type="submit" value="Zurück"></form>';
+            <input type="submit" value="Zurück"></form><img src="Logo.png" height="250">';
     }
     else{
         print '<h1>Dieser Platz ist zu der Uhrzeit leider belegt.</h1><br>
@@ -244,6 +246,7 @@ if(!empty($_REQUEST["statusPlatz"])){
                 <input type="hidden" name="storno" value="Ja">
                 <input type="submit" value="Stornieren"></form>';
         }
+        print '<img src="Logo.png" height="250">';
     }
 }
 if(!empty($_REQUEST["entgültigesbuchungsdatum"])){
@@ -275,7 +278,7 @@ if(!empty($_REQUEST["entgültigesbuchungsdatum"])){
     print '<form method="post" action="tennisplatzbuchung.php">
         <input type="hidden" value="'.$benutzername.'" name="benutzername">
         <input type="hidden" value="'.$passwort.'" name="passwort">
-        <input type="submit" value="Weiter"></form>';
+        <input type="submit" value="Weiter"></form><img src="Logo.png" height="250">';
 }
 elseif(!empty($_REQUEST["endzeit"])){
     $buchungsdatum=$_REQUEST["buchungsdatum"];
@@ -296,7 +299,7 @@ elseif(!empty($_REQUEST["endzeit"])){
     print '<form method="post" action="tennisplatzbuchung.php">
         <input type="hidden" value="'.$benutzername.'" name="benutzername">
         <input type="hidden" value="'.$passwort.'" name="passwort">
-        <input type="submit" value="Nein, zurück!"></form>';
+        <input type="submit" value="Nein, zurück!"></form><img src="Logo.png" height="250">';
 }
 if(!empty($_REQUEST["storno"])){
     $buchungsdatum=$_REQUEST["buchungsdatum"];
@@ -352,7 +355,7 @@ if(!empty($_REQUEST["storno"])){
     print '<br><form method="post" action="tennisplatzbuchung.php">
         <input type="hidden" value="'.$benutzername.'" name="benutzername">
         <input type="hidden" value="'.$passwort.'" name="passwort">
-        <input type="submit" value="Zurück"></form>';
+        <input type="submit" value="Zurück"></form><img src="Logo.png" height="250">';
 }
 if(!empty($_REQUEST["entgültigesStorno"])){
     $buchungsdatum=$_REQUEST["buchungsdatum"];
@@ -393,7 +396,7 @@ if(!empty($_REQUEST["entgültigesStorno"])){
     print '<br><form method="post" action="tennisplatzbuchung.php">
         <input type="hidden" value="'.$benutzername.'" name="benutzername">
         <input type="hidden" value="'.$passwort.'" name="passwort">
-        <input type="submit" value="Zurück"></form>';
+        <input type="submit" value="Zurück"></form><img src="Logo.png" height="250">';
 }
 elseif(!empty($_REQUEST["stornoendzeit"])){
     $buchungsdatum=$_REQUEST["buchungsdatum"];
@@ -416,10 +419,9 @@ elseif(!empty($_REQUEST["stornoendzeit"])){
     print '<form method="post" action="tennisplatzbuchung.php">
         <input type="hidden" value="'.$benutzername.'" name="benutzername">
         <input type="hidden" value="'.$passwort.'" name="passwort">
-        <input type="submit" value="Nein, zurück!"></form>';
+        <input type="submit" value="Nein, zurück!"></form><img src="Logo.png" height="250">';
 }
 $dbh=null;
 ?>
-<img src="Logo.png" height="250">
 </body>
 </html>
