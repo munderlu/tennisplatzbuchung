@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="Logo.png">
     <title>Tennisplatz Schopfloch</title>
 </head>
 <body>
@@ -274,6 +275,9 @@ if(!empty($_REQUEST["entgültigesbuchungsdatum"])){
         }
         $i++;
     }
+    $sql="INSERT INTO verlauf (v_änderung, v_datum, v_anfangszeit, v_endzeit, v_platz, v_benutzername, v_heutigesDatum, v_heutigeUhrzeit) VALUES 
+    ('Buchung', '$buchungsdatum', '$anfangszeit', '$endzeit', ".$platz[-1].", '$benutzername', '$heutigesDatum', '$heutigeUhrzeit');";
+    $dbh->query($sql);
     print "<h1>Ihr Platz wurde erfolgreich gebucht!</h1>";
     print '<form method="post" action="index.php">
         <input type="hidden" value="'.$benutzername.'" name="benutzername">
@@ -392,6 +396,9 @@ if(!empty($_REQUEST["entgültigesStorno"])){
             $dbh->query($sql);
         }
     }
+    $sql="INSERT INTO verlauf (v_änderung, v_datum, v_anfangszeit, v_endzeit, v_platz, v_benutzername, v_heutigesDatum, v_heutigeUhrzeit) VALUES 
+    ('Stornierung', '$buchungsdatum', '$uhrzeit', '$endzeit', ".$platz[-1].", '$benutzername', '$heutigesDatum', '$heutigeUhrzeit');";
+    $dbh->query($sql);
     print "<h1>Ihre Buchung wurde erfolgreich storniert!</h1>";
     print '<br><form method="post" action="index.php">
         <input type="hidden" value="'.$benutzername.'" name="benutzername">
