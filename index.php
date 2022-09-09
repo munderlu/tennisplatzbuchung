@@ -122,7 +122,18 @@ if(!empty($_REQUEST["datum"])){
     $rückgabe=$dbh->query($sql);
     $ergebnis=$rückgabe->fetchAll(PDO::FETCH_ASSOC);
     $idInZweiWochen=$ergebnis[0]["d_id"];
-    if($id<$idInZweiWochen){
+    $sql="SELECT d_id FROM daten WHERE d_datum='$heutigesDatum';";
+    $rückgabe=$dbh->query($sql);
+    $ergebnis=$rückgabe->fetchAll(PDO::FETCH_ASSOC);
+    $heutigeID=$ergebnis[0]["d_id"];
+    if($id<$heutigeID){
+        print '<h1>Dieser Tag war schon ...</h1>';
+        print '<form method="post" action="index.php">
+            <input type="hidden" value="'.$benutzername.'" name="benutzername">
+            <input type="hidden" value="'.$passwort.'" name="passwort">
+            <input type="submit" value="An einem anderen Tag buchen"></form><img src="Logo.png" height="250">';
+    }
+    else if($id<$idInZweiWochen){
         print '<table>
                     <tr><th colspan="3">'.$tag.'.'.$monat.'</th></tr>
                     <tr>
