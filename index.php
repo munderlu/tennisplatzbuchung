@@ -13,7 +13,7 @@
 $timestamp=time();
 $heutigesDatum=date("d.m.", $timestamp);
 $geteiltesHeutigesDatum=explode(".", $heutigesDatum);
-//$heutigeUhrzeit=date("H:i", $timestamp);
+$heutigeUhrzeit=date("H:i", $timestamp);
 $dbh=new PDO("mysql: host=localhost; dbname=tennisplatzbuchung", "root", "");
 if((empty($_REQUEST["passwort"]) || empty($_REQUEST["benutzername"])) && empty($_REQUEST["datum"]) && empty($_REQUEST["buchungsdatum"]) && empty($_REQUEST["endzeit"])){
     print '<h1>Bitte geben Sie Ihren Benutzername und Ihr Passwort ein:</h1>
@@ -275,7 +275,7 @@ if(!empty($_REQUEST["entgültigesbuchungsdatum"])){
         }
         $i++;
     }
-    $sql="INSERT INTO verlauf (v_änderung, v_datum, v_anfangszeit, v_endzeit, v_platz, v_benutzername, v_heutigesDatum, v_heutigeUhrzeit) VALUES 
+    $sql="INSERT INTO verlauf (v_update, v_datum, v_anfangszeit, v_endzeit, v_platz, v_benutzername, v_heutigesDatum, v_heutigeUhrzeit) VALUES 
     ('Buchung', '$buchungsdatum', '$anfangszeit', '$endzeit', ".$platz[-1].", '$benutzername', '$heutigesDatum', '$heutigeUhrzeit');";
     $dbh->query($sql);
     print "<h1>Ihr Platz wurde erfolgreich gebucht!</h1>";
@@ -396,7 +396,7 @@ if(!empty($_REQUEST["entgültigesStorno"])){
             $dbh->query($sql);
         }
     }
-    $sql="INSERT INTO verlauf (v_änderung, v_datum, v_anfangszeit, v_endzeit, v_platz, v_benutzername, v_heutigesDatum, v_heutigeUhrzeit) VALUES 
+    $sql="INSERT INTO verlauf (v_update, v_datum, v_anfangszeit, v_endzeit, v_platz, v_benutzername, v_heutigesDatum, v_heutigeUhrzeit) VALUES 
     ('Stornierung', '$buchungsdatum', '$uhrzeit', '$endzeit', ".$platz[-1].", '$benutzername', '$heutigesDatum', '$heutigeUhrzeit');";
     $dbh->query($sql);
     print "<h1>Ihre Buchung wurde erfolgreich storniert!</h1>";
