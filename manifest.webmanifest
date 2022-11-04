@@ -1,0 +1,11 @@
+{
+"name": "Tennisplatzbuchung",
+"short_name": "Tennisplatz",
+"theme_color": "#f20404",
+"background_color": "#f20404",
+"display": "standalone",
+"orientation": "portrait",
+"scope": "/",
+"start_url": "/index.php",
+"icons": "Logo.png"
+}
