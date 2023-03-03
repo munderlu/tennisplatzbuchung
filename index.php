@@ -275,8 +275,29 @@ if(!empty($_REQUEST["entgültigesbuchungsdatum"])){
     $id=$ergebnis[0]["d_id"];
     $i=0;
     $uhrzeit=0;
+    $break=false;
+    $eindurchlauf=false;
     while($uhrzeit!=$endzeit){
         $sql="UPDATE daten SET $platz=1, d_bucherplatz".$platz[-1]."='$benutzername' WHERE d_id=$id+$i;";
+        $sql_pruefung="SELECT $platz FROM daten WHERE d_id=$id+$i;";
+        $rückgabeprüfung=$dbh->query($sql_pruefung);
+        $ergebnis_prüfung=$rückgabeprüfung->fetchAll(PDO::FETCH_ASSOC);
+        if($ergebnis_prüfung[0][$platz]!=0){
+            print "<h1>Der Platz wurde Ihnen vor der Nase weggeschnappt ...</h1>";
+            if($eindurchlauf){
+                print "<h1> Der Platz konnte aber bis $uhrzeit gebucht werden!";
+                $sql="INSERT INTO verlauf (v_update, v_datum, v_anfangszeit, v_endzeit, v_platz, v_benutzername, v_heutigesDatum, v_heutigeUhrzeit) VALUES 
+                ('Buchung', '$buchungsdatum', '$anfangszeit', '$uhrzeit', ".$platz[-1].", '$benutzername', '$heutigesDatum', '$heutigeUhrzeit');";
+                $dbh->query($sql);
+            }
+            print '<form method="post" action="index.php">
+                <input type="hidden" value="'.$benutzername.'" name="benutzername">
+                <input type="hidden" value="'.$passwort.'" name="passwort">
+                <input type="submit" value="An einem anderen Tag buchen"></form><img src="Logo.png" height="250">';
+            $break=true;
+            break;
+        }
+        $eindurchlauf=true;
         $sql2="SELECT d_uhrzeit FROM daten WHERE d_id=$id+$i+1;";
         $dbh->query($sql);
         $rückgabe=$dbh->query($sql2);
@@ -287,14 +308,16 @@ if(!empty($_REQUEST["entgültigesbuchungsdatum"])){
         }
         $i++;
     }
-    $sql="INSERT INTO verlauf (v_update, v_datum, v_anfangszeit, v_endzeit, v_platz, v_benutzername, v_heutigesDatum, v_heutigeUhrzeit) VALUES 
-    ('Buchung', '$buchungsdatum', '$anfangszeit', '$endzeit', ".$platz[-1].", '$benutzername', '$heutigesDatum', '$heutigeUhrzeit');";
-    $dbh->query($sql);
-    print "<h1>Ihr Platz wurde erfolgreich gebucht!</h1>";
-    print '<form method="post" action="index.php">
-        <input type="hidden" value="'.$benutzername.'" name="benutzername">
-        <input type="hidden" value="'.$passwort.'" name="passwort">
-        <input type="submit" value="Weiter"></form><img src="Logo.png" height="250">';
+    if(!$break){
+        $sql="INSERT INTO verlauf (v_update, v_datum, v_anfangszeit, v_endzeit, v_platz, v_benutzername, v_heutigesDatum, v_heutigeUhrzeit) VALUES 
+        ('Buchung', '$buchungsdatum', '$anfangszeit', '$endzeit', ".$platz[-1].", '$benutzername', '$heutigesDatum', '$heutigeUhrzeit');";
+        $dbh->query($sql);
+        print "<h1>Ihr Platz wurde erfolgreich gebucht!</h1>";
+        print '<form method="post" action="index.php">
+            <input type="hidden" value="'.$benutzername.'" name="benutzername">
+            <input type="hidden" value="'.$passwort.'" name="passwort">
+            <input type="submit" value="Weiter"></form><img src="Logo.png" height="250">';
+    }
 }
 elseif(!empty($_REQUEST["endzeit"])){
     $buchungsdatum=$_REQUEST["buchungsdatum"];
