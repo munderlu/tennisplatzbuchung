@@ -21,6 +21,12 @@ table{
     margin-bottom: 20px;
     float: left;
 }
+a, a:visited{
+    color: black;
+}
+a:hover{
+    color: rgb(255, 196, 0);
+}
 #überschrift{
     display: inline-block;
     margin: 10px;

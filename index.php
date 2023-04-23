@@ -22,7 +22,7 @@ if((empty($_REQUEST["passwort"]) || empty($_REQUEST["benutzername"])) && empty($
             Benutzername: <input typ="text" name="benutzername"><br><br>
             Passwort: <input type="password" name="passwort">
             <input type="submit" value="Weiter">
-        </form><img src="Logo.png" height="250">';
+        </form><br><h2><a href="heutigeplaetze.php">Schauen, wann die Plätze heute belegt sind!</a></h2><img src="Logo.png" height="250">';
 }
 if(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"])){
     $passwort=$_REQUEST["passwort"];
