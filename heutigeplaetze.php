@@ -14,7 +14,7 @@
         $timestamp=time();
         $heutigesDatum=date("d.m.", $timestamp);
         $geteiltesHeutigesDatum=explode(".", $heutigesDatum);
-        $dbh=new PDO("mysql: host=localhost; dbname=tennisplatzbuchung", "root", "");
+        $dbh=new PDO("mysql: host=localhost; dbname=tennisplatzbuchung; charset=utf8", "root", "");
         $sql="SELECT * FROM daten WHERE d_datum='".$heutigesDatum."';";
         $ergebnis=$dbh->query($sql);
         $daten=$ergebnis->fetchAll(PDO::FETCH_ASSOC);

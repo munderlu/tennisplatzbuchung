@@ -15,7 +15,7 @@ $timestamp=time();
 $heutigesDatum=date("d.m.", $timestamp);
 $geteiltesHeutigesDatum=explode(".", $heutigesDatum);
 $heutigeUhrzeit=date("H:i", $timestamp);
-$dbh=new PDO("mysql: host=localhost; dbname=tennisplatzbuchung", "root", "");
+$dbh=new PDO("mysql: host=localhost; dbname=tennisplatzbuchung; charset=utf8", "root", "");
 if((empty($_REQUEST["passwort"]) || empty($_REQUEST["benutzername"]))){
     print '<h1>Bitte geben Sie Ihren Benutzername und Ihr Passwort ein:</h1>
         <form method="post" action="admin.php">
