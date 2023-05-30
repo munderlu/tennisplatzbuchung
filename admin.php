@@ -22,7 +22,9 @@ if((empty($_REQUEST["passwort"]) || empty($_REQUEST["benutzername"]))){
             Benutzername: <input typ="text" name="benutzername"><br><br>
             Passwort: <input type="password" name="passwort">
             <input type="submit" value="Weiter">
-        </form><img src="Logo.png" height="250">';
+        </form><br>
+        <h2><a href="admin.php">Plätze buchen</a><br><br>
+<a href="benutzer.php">Benutzer erstellen</a></h2><img src="Logo.png" height="250">';
 }
 if(!empty($_REQUEST["endgültig"])){
     $passwort=$_REQUEST["passwort"];

@@ -18,46 +18,27 @@ $heutigeUhrzeit=date("H:i", $timestamp);
 $dbh=new PDO("mysql: host=localhost; dbname=tennisplatzbuchung; charset=utf8", "root", "");
 if((empty($_REQUEST["passwort"]) || empty($_REQUEST["benutzername"]))){
     print '<h1>Bitte geben Sie Ihren Benutzername und Ihr Passwort ein:</h1>
-        <form method="post" action="admin.php">
+        <form method="post" action="benutzer.php">
             Benutzername: <input typ="text" name="benutzername"><br><br>
             Passwort: <input type="password" name="passwort">
-            <input type="submit" value="Weiter">
-        </form><img src="Logo.png" height="250">';
+            <input type="submit" value="Weiter"></form><br>
+            <h2><a href="admin.php">Plätze buchen</a><br><br>
+<a href="benutzer.php">Benutzer erstellen</a></h2>
+        <img src="Logo.png" height="250">';
 }
 if(!empty($_REQUEST["endgültig"])){
 }
-elseif(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"]) && !empty($_REQUEST["datum"]) && !empty($_REQUEST["anfangsuhrzeit"]) && !empty($_REQUEST["enduhrzeit"]) && !empty($_REQUEST["platz"]) && !empty($_REQUEST["verwendungszweck"])){
+elseif(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"]) && !empty($_REQUEST["neuerbenutzername"]) && !empty($_REQUEST["neuespasswort"]) && !empty($_REQUEST["name"])){
     $passwort=$_REQUEST["passwort"];
     $benutzername=$_REQUEST["benutzername"];
-    $anfangsuhrzeit=$_REQUEST["anfangsuhrzeit"];
-    $enduhrzeit=$_REQUEST["enduhrzeit"];
-    $datum=$_REQUEST["datum"];
-    $platz=$_REQUEST["platz"];
-    $verwendungszweck=$_REQUEST["verwendungszweck"];
-    $wiederholung=$_REQUEST["wiederholung"];
-    $woechentlich="wöchentlich";
-    if($wiederholung=="Nein"){
-        $woechentlich="";
-    }
-    print "<h1>Möchten Sie am $datum von $anfangsuhrzeit bis $enduhrzeit $woechentlich Platz $platz buchen?</h1>";
-    print '<form method="post" action="admin.php">
-    <input type="hidden" name="datum" value="'.$datum.'">
-    <input type="hidden" name="wiederholung" value="'.$wiederholung.'">
-    <input type="hidden" name="anfangsuhrzeit" value="'.$anfangsuhrzeit.'">
-    <input type="hidden" name="enduhrzeit" value="'.$enduhrzeit.'">
-    <input type="hidden" name="platz" value="'.$platz.'">
-    <input type="hidden" name="benutzername" value="'.$benutzername.'">
-    <input type="hidden" name="passwort" value="'.$passwort.'">
-    <input type="hidden" name="verwendungszweck" value="'.$verwendungszweck.'">
-    <input type="hidden" name="endgültig" value="Ja">
-    <input type="submit" value="Ja">
-    </form><br>
-    <form method="post" action="admin.php">
-    <imput type="hidden" name="benutzername" value="'.$benutzername.'">
-    <imput type="hidden" name="passwort" value="'.$passwort.'">
-    <input type="submit" value="Zurück zum Start">
-    </form><br>
-    <img src="Logo.png" height="250">';
+    $neuerbenutzername=$_REQUEST["neuerbenutzername"];
+    $neuespasswort=$_REQUEST["neuespasswort"];
+    $name=$_REQUEST["name"];
+    $sql="INSERT INTO `konten`(`k_benutzername`, `k_passwort`, `k_name`) VALUES ('$neuerbenutzername','$neuespasswort','$name'); ";
+    $dbh->query($sql);
+    print '<h1>Der neue Benutzer wurde erfolgreich hinzugefügt</h1>
+    <form method="post" action="benutzer.php"><input type="hidden" name="benutzername" value="'.$benutzername.'">
+    <input type="hidden" name="passwort" value="'.$passwort.'"><input type="submit" value="Weiter"></form><img src="Logo.png" height="250">';
 }
 elseif(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"])){
     $passwort=$_REQUEST["passwort"];
@@ -73,9 +54,9 @@ elseif(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"])){
             <form method="post" action="benutzer.php">
                 Benutzername: <input type="text" name="neuerbenutzername"><br><br>
                 Passwort: <input type="text" name="neuespasswort"><br><br>
-                Ganzer Name: <input type="text" name="name"><br><br>
+                Ganzer Name: <input type="text" name="name"><br>
                 <input type="hidden" name="benutzername" value="'.$benutzername.'">
-                <input type="hidden" name="passwort" value="'.$passwort.'"><br><br>
+                <input type="hidden" name="passwort" value="'.$passwort.'"><br>
             <input type="submit" value="Weiter">
             </form><br>
             <form action="admin.php" method="post">
