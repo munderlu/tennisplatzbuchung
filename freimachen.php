@@ -6,11 +6,11 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="Logo.png">
     <link rel="manifest" href="/manifest.webmanifest">
-    <title>Tennisplatz Schopfloch Admin</title>
+    <title>Admin Tennisplatz Schopfloch</title>
 </head>
 <body>
 <h1 id="überschrift">Admin Tennisplatzbuchung</h1>
-<h1>Plätze buchen</h1>
+<h1>Platzreservierung entfernen</h1>
 <?php
 $timestamp=time();
 $heutigesDatum=date("d.m.", $timestamp);
@@ -19,13 +19,14 @@ $heutigeUhrzeit=date("H:i", $timestamp);
 $dbh=new PDO("mysql: host=localhost; dbname=tennisplatzbuchung; charset=utf8", "root", "");
 if((empty($_REQUEST["passwort"]) || empty($_REQUEST["benutzername"]))){
     print '<h1>Bitte geben Sie Ihren Benutzername und Ihr Passwort ein:</h1>
-        <form method="post" action="admin.php">
+        <form method="post" action="freimachen.php">
             Benutzername: <input typ="text" name="benutzername"><br><br>
             Passwort: <input type="password" name="passwort">
             <input type="submit" value="Weiter">
         </form><br>
-        <h2><a href="admin.php">Plätze buchen</a><br><br>
-<a href="benutzer.php">Benutzer erstellen</a><br><br><a href="freimachen.php">Plätze freigeben</a></h2><img src="Logo.png" height="250">';
+        <h2><a href="freimachen.php">Plätze buchen</a><br><br>
+<a href="benutzer.php">Benutzer erstellen</a><br><br><a href="freimachen.php">Plätze freigeben</a>
+</h2><img src="Logo.png" height="250">';
 }
 if(!empty($_REQUEST["endgültig"])){
     $passwort=$_REQUEST["passwort"];
@@ -40,7 +41,6 @@ if(!empty($_REQUEST["endgültig"])){
     $datum=$tag.".".$monat.".";
 
     $platznummer=$_REQUEST["platz"];
-    $verwendungszweck=$_REQUEST["verwendungszweck"];
     $wiederholung=$_REQUEST["wiederholung"];
     $sql="SELECT d_id FROM daten WHERE d_datum='$datum' AND d_uhrzeit='$anfangszeit';";
     $rückgabe=$dbh->query($sql);
@@ -62,7 +62,7 @@ if(!empty($_REQUEST["endgültig"])){
         while($anfangsid<11680){
             if($platz=="beide"){
                 while($uhrzeit!=$endzeit){
-                    $sql="UPDATE daten SET d_platz1=1, d_bucherplatz1='$verwendungszweck' WHERE d_id=$anfangsid+$i;";
+                    $sql="UPDATE daten SET d_platz1=0, d_bucherplatz1=null WHERE d_id=$anfangsid+$i;";
                     $dbh->query($sql);
                     $sql2="SELECT d_uhrzeit FROM daten WHERE d_id=$anfangsid+$i+1;";
                     $dbh->query($sql);
@@ -77,7 +77,7 @@ if(!empty($_REQUEST["endgültig"])){
                 $uhrzeit=0;
                 $i=0;
                 while($uhrzeit!=$endzeit){
-                    $sql="UPDATE daten SET d_platz2=1, d_bucherplatz2='$verwendungszweck' WHERE d_id=$anfangsid+$i;";
+                    $sql="UPDATE daten SET d_platz2=0, d_bucherplatz2=null WHERE d_id=$anfangsid+$i;";
                     $dbh->query($sql);
                     $sql2="SELECT d_uhrzeit FROM daten WHERE d_id=$anfangsid+$i+1;";
                     $dbh->query($sql);
@@ -91,7 +91,7 @@ if(!empty($_REQUEST["endgültig"])){
                 }
             }else{
                 while($uhrzeit!=$endzeit){
-                    $sql="UPDATE daten SET $platz=1, d_bucherplatz".$platz[-1]."='$verwendungszweck' WHERE d_id=$anfangsid+$i;";
+                    $sql="UPDATE daten SET $platz=0, d_bucherplatz".$platz[-1]."=null WHERE d_id=$anfangsid+$i;";
                     $dbh->query($sql);
                     $sql2="SELECT d_uhrzeit FROM daten WHERE d_id=$anfangsid+$i+1;";
                     $dbh->query($sql);
@@ -111,7 +111,7 @@ if(!empty($_REQUEST["endgültig"])){
     }else{
         if($platz=="beide"){
             while($uhrzeit!=$endzeit){
-                $sql="UPDATE daten SET d_platz1=1, d_bucherplatz1='$verwendungszweck' WHERE d_id=$id+$i;";
+                $sql="UPDATE daten SET d_platz1=0, d_bucherplatz1=null WHERE d_id=$id+$i;";
                 $dbh->query($sql);
                 $sql2="SELECT d_uhrzeit FROM daten WHERE d_id=$id+$i+1;";
                 $dbh->query($sql);
@@ -126,7 +126,7 @@ if(!empty($_REQUEST["endgültig"])){
             $uhrzeit=0;
             $i=0;
             while($uhrzeit!=$endzeit){
-                $sql="UPDATE daten SET d_platz2=1, d_bucherplatz2='$verwendungszweck' WHERE d_id=$id+$i;";
+                $sql="UPDATE daten SET d_platz2=0, d_bucherplatz2=null WHERE d_id=$id+$i;";
                 $dbh->query($sql);
                 $sql2="SELECT d_uhrzeit FROM daten WHERE d_id=$id+$i+1;";
                 $dbh->query($sql);
@@ -140,7 +140,7 @@ if(!empty($_REQUEST["endgültig"])){
             }
         }else{
             while($uhrzeit!=$endzeit){
-                $sql="UPDATE daten SET $platz=1, d_bucherplatz".$platz[-1]."='$verwendungszweck' WHERE d_id=$id+$i;";
+                $sql="UPDATE daten SET $platz=0, d_bucherplatz".$platz[-1]."=null WHERE d_id=$id+$i;";
                 $dbh->query($sql);
                 $sql2="SELECT d_uhrzeit FROM daten WHERE d_id=$id+$i+1;";
                 $dbh->query($sql);
@@ -155,26 +155,25 @@ if(!empty($_REQUEST["endgültig"])){
         }
     }
     print "<h1>Ihr Platz wurde erfolgreich gebucht!</h1>";
-    print '<form method="post" action="admin.php">
+    print '<form method="post" action="freimachen.php">
         <input type="hidden" value="'.$benutzername.'" name="benutzername">
         <input type="hidden" value="'.$passwort.'" name="passwort">
         <input type="submit" value="Weiter"></form><img src="Logo.png" height="250">';
 }
-elseif(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"]) && !empty($_REQUEST["datum"]) && !empty($_REQUEST["anfangsuhrzeit"]) && !empty($_REQUEST["enduhrzeit"]) && !empty($_REQUEST["platz"]) && !empty($_REQUEST["verwendungszweck"])){
+elseif(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"]) && !empty($_REQUEST["datum"]) && !empty($_REQUEST["anfangsuhrzeit"]) && !empty($_REQUEST["enduhrzeit"]) && !empty($_REQUEST["platz"])){
     $passwort=$_REQUEST["passwort"];
     $benutzername=$_REQUEST["benutzername"];
     $anfangsuhrzeit=$_REQUEST["anfangsuhrzeit"];
     $enduhrzeit=$_REQUEST["enduhrzeit"];
     $datum=$_REQUEST["datum"];
     $platz=$_REQUEST["platz"];
-    $verwendungszweck=$_REQUEST["verwendungszweck"];
     $wiederholung=$_REQUEST["wiederholung"];
     $woechentlich="wöchentlich";
     if($wiederholung=="Nein"){
         $woechentlich="";
     }
-    print "<h1>Möchten Sie am $datum von $anfangsuhrzeit bis $enduhrzeit $woechentlich Platz $platz buchen?</h1>";
-    print '<form method="post" action="admin.php">
+    print "<h1>Möchten Sie am $datum von $anfangsuhrzeit bis $enduhrzeit $woechentlich Platz $platz frei machen?</h1>";
+    print '<form method="post" action="freimachen.php">
     <input type="hidden" name="datum" value="'.$datum.'">
     <input type="hidden" name="wiederholung" value="'.$wiederholung.'">
     <input type="hidden" name="anfangsuhrzeit" value="'.$anfangsuhrzeit.'">
@@ -182,11 +181,10 @@ elseif(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"]) && !em
     <input type="hidden" name="platz" value="'.$platz.'">
     <input type="hidden" name="benutzername" value="'.$benutzername.'">
     <input type="hidden" name="passwort" value="'.$passwort.'">
-    <input type="hidden" name="verwendungszweck" value="'.$verwendungszweck.'">
     <input type="hidden" name="endgültig" value="Ja">
     <input type="submit" value="Ja">
     </form><br>
-    <form method="post" action="admin.php">
+    <form method="post" action="freimachen.php">
     <imput type="hidden" name="benutzername" value="'.$benutzername.'">
     <imput type="hidden" name="passwort" value="'.$passwort.'">
     <input type="submit" value="Zurück zum Start">
@@ -204,9 +202,8 @@ elseif(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"])){
         if($wert["k_benutzername"]=="admin" && $wert["k_passwort"]==$passwort){
             $richtigeEingabe=True;
             print '<h1>Bitte geben Sie Ihre Daten ein:</h1>
-            <form method="post" action="admin.php">
+            <form method="post" action="freimachen.php">
                 Datum: <input type="date" name="datum"><br><br>
-                Verwendungszweck: <input type="text" name="verwendungszweck"><br><br>
                 Wöchentliche Wiederholung?: <select name="wiederholung">
                     <option value="Nein" selected>Nein</option>
                     <option value="Ja">Ja</option>
@@ -285,13 +282,13 @@ elseif(!empty($_REQUEST["passwort"]) && !empty($_REQUEST["benutzername"])){
                 <input type="hidden" name="passwort" value="'.$passwort.'"><br><br>
             <input type="submit" value="Weiter">
             </form><br>
-            <form action="admin.php" method="post">
+            <form action="freimachen.php" method="post">
                 <input type="submit" value="Abmelden"></form><img src="Logo.png" height="250">';
         }
     }
     if(!$richtigeEingabe){
         print "<h1>Sie haben ein falsches Passwort oder einen falschen Benutzername eingegeben.</h1>
-            <form method='post' action='admin.php'><input type='submit' value='Weiter'></form>
+            <form method='post' action='freimachen.php'><input type='submit' value='Weiter'></form>
             <img src='Logo.png' height='250'>";
     }
 }

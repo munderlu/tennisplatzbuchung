@@ -6,10 +6,11 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="Logo.png">
     <link rel="manifest" href="/manifest.webmanifest">
-    <title>Tennisplatz Schopfloch</title>
+    <title>Tennisplatz Schopfloch Admin</title>
 </head>
 <body>
-<h1 id="überschrift">Tennisplatzbuchung</h1>
+<h1 id="überschrift">Admin Tennisplatzbuchung</h1>
+<h1>Benutzer erstellen</h1>
 <?php
 $timestamp=time();
 $heutigesDatum=date("d.m.", $timestamp);
@@ -23,7 +24,7 @@ if((empty($_REQUEST["passwort"]) || empty($_REQUEST["benutzername"]))){
             Passwort: <input type="password" name="passwort">
             <input type="submit" value="Weiter"></form><br>
             <h2><a href="admin.php">Plätze buchen</a><br><br>
-<a href="benutzer.php">Benutzer erstellen</a></h2>
+<a href="benutzer.php">Benutzer erstellen</a><br><br><a href="freimachen.php">Plätze freigeben</a></h2>
         <img src="Logo.png" height="250">';
 }
 if(!empty($_REQUEST["endgültig"])){
