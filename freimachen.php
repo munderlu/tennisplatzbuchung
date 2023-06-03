@@ -24,7 +24,7 @@ if((empty($_REQUEST["passwort"]) || empty($_REQUEST["benutzername"]))){
             Passwort: <input type="password" name="passwort">
             <input type="submit" value="Weiter">
         </form><br>
-        <h2><a href="freimachen.php">Plätze buchen</a><br><br>
+        <h2><a href="admin.php">Plätze buchen</a><br><br>
 <a href="benutzer.php">Benutzer erstellen</a><br><br><a href="freimachen.php">Plätze freigeben</a>
 </h2><img src="Logo.png" height="250">';
 }
