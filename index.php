@@ -2,6 +2,9 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Buchungssoftware für den Tennisplatz des TSV Schopfloch e.V.">
+    <meta name="keywords" content="Tennisplatz, TSV Schopfloch, Schopfloch, Tennis">
+	<meta name="author" content="Luke Munderich">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="Logo.png">
