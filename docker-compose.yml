@@ -1,0 +1,38 @@
+services:
+  # 1. Unser Webserver (Apache + PHP)
+  web:
+    build: .
+    ports:
+      - "8080:80" # Website erreichbar unter http://localhost:8080
+    volumes:
+      - ./src:/var/www/html # Spiegelt deinen src-Ordner in den Container
+    depends_on:
+      - db
+
+  # 2. Unsere Datenbank (MariaDB / MySQL)
+  db:
+    image: mariadb:10.11 # MariaDB ist ein Drop-in Replacement für MySQL
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tennisplatzbuchung
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql # Speichert die Daten dauerhaft
+      - ./db_init:/docker-entrypoint-initdb.d # Importiert .sql Dateien beim 1. Start
+
+  # 3. phpMyAdmin (Datenbank-Verwaltung)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80" # phpMyAdmin erreichbar unter http://localhost:8081
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      - db
+
+# Hier wird definiert, dass die Datenbank-Daten auf der Festplatte gespeichert werden
+volumes:
+  db_data:
